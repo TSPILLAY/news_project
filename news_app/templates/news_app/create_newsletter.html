@@ -1,23 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Newsletter</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 50px auto; max-width: 500px; background-color: #f8f9fa; }
-        .form-container { background: #fff; padding: 25px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { background-color: #28a745; color: white; padding: 10px; border: none; width: 100%; border-radius: 4px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <h2>Curate a Newsletter</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn">Publish Newsletter</button>
-        </form>
-        <p><a href="{% url 'newsletter_list' %}">Back to Newsletters</a></p>
-    </div>
-</body>
-</html>
+{% extends 'news_app/base.html' %}
+
+{% block title %}Curate Newsletter{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Curate a Newsletter</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success" style="width: 100%;">Publish Newsletter</button>
+    </form>
+    <p style="margin-top: 15px;"><a href="{% url 'newsletter_list' %}">Back to Newsletters</a></p>
+</div>
+{% endblock %}

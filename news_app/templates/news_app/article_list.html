@@ -1,38 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Published Articles - News App</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; }
-        .nav { margin-bottom: 20px; }
-        .nav a { margin-right: 15px; text-decoration: none; color: #007bff; font-weight: bold; }
-        .card { background: #fff; padding: 20px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    </style>
-</head>
-<body>
-    <div class="nav">
-        <a href="{% url 'article_list' %}">Home Feed</a>
-        <a href="{% url 'newsletter_list' %}">Newsletters</a>
-        {% if user.role == 'journalist' %}
-            <a href="{% url 'create_article' %}">Submit Article</a>
-        {% endif %}
-        {% if user.role == 'editor' %}
-            <a href="{% url 'pending_articles' %}">Editor Review Dashboard</a>
-        {% endif %}
-    </div>
+{% extends 'news_app/base.html' %}
 
-    <h2>Published Articles</h2>
-    {% if articles %}
-        {% for article in articles %}
-            <div class="card">
-                <h3>{{ article.title }}</h3>
-                <p><small>By {{ article.author.username }} {% if article.publisher %}| {{ article.publisher.name }}{% endif %} | {{ article.created_at|date:"M d, Y" }}</small></p>
-                <p>{{ article.content }}</p>
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>No published articles currently available.</p>
-    {% endif %}
-</body>
-</html>
+{% block title %}Published Articles - News App{% endblock %}
+
+{% block content %}
+<h2>Published Articles</h2>
+
+{% if articles %}
+    {% for article in articles %}
+        <div class="card">
+            <h3>{{ article.title }}</h3>
+            <p><small>By {{ article.author.username }} {% if article.publisher %}| {{ article.publisher.name }}{% endif %} | {{ article.created_at|date:"M d, Y" }}</small></p>
+            <p>{{ article.content }}</p>
+
+            {% if user.is_authenticated and article.author == user %}
+                <div style="margin-top: 10px;">
+                    <a href="{% url 'edit_article' article.id %}" class="btn btn-warning">Edit Article</a>
+                    <a href="{% url 'delete_article' article.id %}" class="btn btn-danger">Delete Article</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No published articles currently available.</p>
+{% endif %}
+{% endblock %}

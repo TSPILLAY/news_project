@@ -1,0 +1,15 @@
+{% extends 'news_app/base.html' %}
+
+{% block title %}Confirm Delete Article{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Delete Article</h2>
+    <p>Are you sure you want to delete <strong>"{{ article.title }}"</strong>? This action cannot be undone.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" style="width: 100%;">Confirm Delete</button>
+    </form>
+    <p style="margin-top: 15px;"><a href="{% url 'article_list' %}">Cancel</a></p>
+</div>
+{% endblock %}

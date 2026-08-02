@@ -1,23 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Article</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 50px auto; max-width: 500px; background-color: #f8f9fa; }
-        .form-container { background: #fff; padding: 25px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { background-color: #007bff; color: white; padding: 10px; border: none; width: 100%; border-radius: 4px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <h2>Submit Article for Approval</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn">Submit Article</button>
-        </form>
-        <p><a href="{% url 'article_list' %}">Back to Feed</a></p>
-    </div>
-</body>
-</html>
+{% extends 'news_app/base.html' %}
+
+{% block title %}Submit Article{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Submit Article for Approval</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn" style="width: 100%;">Submit Article</button>
+    </form>
+    <p style="margin-top: 15px;"><a href="{% url 'article_list' %}">Back to Feed</a></p>
+</div>
+{% endblock %}

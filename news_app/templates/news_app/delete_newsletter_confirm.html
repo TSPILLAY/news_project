@@ -1,0 +1,15 @@
+{% extends 'news_app/base.html' %}
+
+{% block title %}Confirm Delete Newsletter{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Delete Newsletter</h2>
+    <p>Are you sure you want to delete <strong>"{{ newsletter.title }}"</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" style="width: 100%;">Confirm Delete</button>
+    </form>
+    <p style="margin-top: 15px;"><a href="{% url 'newsletter_list' %}">Cancel</a></p>
+</div>
+{% endblock %}

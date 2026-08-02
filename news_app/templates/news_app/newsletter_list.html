@@ -1,37 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Newsletters</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; }
-        .card { background: #fff; padding: 20px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .btn { display: inline-block; background: #28a745; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px; }
-    </style>
-</head>
-<body>
-    <h2>Curated Newsletters</h2>
-    {% if user.role == 'journalist' or user.role == 'editor' %}
-        <p><a href="{% url 'create_newsletter' %}" class="btn">Curate New Newsletter</a></p>
-    {% endif %}
+{% extends 'news_app/base.html' %}
 
-    {% if newsletters %}
-        {% for newsletter in newsletters %}
-            <div class="card">
-                <h3>{{ newsletter.title }}</h3>
-                <p><strong>Curated by:</strong> {{ newsletter.author.username }}</p>
-                <p>{{ newsletter.description }}</p>
-                <h4>Included Articles:</h4>
-                <ul>
-                    {% for article in newsletter.articles.all %}
-                        <li>{{ article.title }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>No newsletters published yet.</p>
-    {% endif %}
-    <p><a href="{% url 'article_list' %}">Back to Main Feed</a></p>
-</body>
-</html>
+{% block title %}Newsletters - News App{% endblock %}
+
+{% block content %}
+<h2>Curated Newsletters</h2>
+
+{% if user.is_authenticated and user.role == 'journalist' or user.role == 'editor' %}
+    <p><a href="{% url 'create_newsletter' %}" class="btn btn-success">Curate New Newsletter</a></p>
+{% endif %}
+
+{% if newsletters %}
+    {% for newsletter in newsletters %}
+        <div class="card">
+            <h3>{{ newsletter.title }}</h3>
+            <p><strong>Curated by:</strong> {{ newsletter.author.username }}</p>
+            <p>{{ newsletter.description }}</p>
+            <h4>Included Articles:</h4>
+            <ul>
+                {% for article in newsletter.articles.all %}
+                    <li>{{ article.title }}</li>
+                {% endfor %}
+            </ul>
+
+            {% if user.is_authenticated and newsletter.author == user %}
+                <div style="margin-top: 10px;">
+                    <a href="{% url 'edit_newsletter' newsletter.id %}" class="btn btn-warning">Edit Newsletter</a>
+                    <a href="{% url 'delete_newsletter' newsletter.id %}" class="btn btn-danger">Delete Newsletter</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No newsletters published yet.</p>
+{% endif %}
+{% endblock %}

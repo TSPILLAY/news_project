@@ -16,7 +16,6 @@ class CustomUser(AbstractUser):
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='reader')
 
-    # Reader subscriptions to publishers and journalists
     subscribed_publishers = models.ManyToManyField(
         'Publisher', blank=True, related_name='reader_subscribers'
     )
@@ -27,20 +26,16 @@ class CustomUser(AbstractUser):
     def save(self, *args, **kwargs):
         """
         Override standard save behavior.
-        
-        Clears publisher and journalist subscription lists if the user's
-        role is changed to or set as Journalist.
+        Clears publisher and journalist subscriptions if role is non-reader.
         """
         super().save(*args, **kwargs)
-        if self.role == 'journalist':
+        if self.role != 'reader':
             self.subscribed_publishers.clear()
             self.subscribed_journalists.clear()
 
 
 class Publisher(models.Model):
-    """
-    Represents a publishing organization employing editors and journalists.
-    """
+    """Represents a publishing organization employing editors and journalists."""
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     editors = models.ManyToManyField(
@@ -51,15 +46,11 @@ class Publisher(models.Model):
     )
 
     def __str__(self):
-        """Return string representation of Publisher."""
         return self.name
 
 
 class Article(models.Model):
-    """
-    Represents a news article written by a journalist and optionally
-    associated with a publisher organization.
-    """
+    """Represents a news article written by a journalist."""
     title = models.CharField(max_length=255)
     content = models.TextField()
     author = models.ForeignKey(
@@ -72,14 +63,11 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        """Return string representation of Article."""
         return self.title
 
 
 class Newsletter(models.Model):
-    """
-    Represents a newsletter curated by a journalist, containing multiple articles.
-    """
+    """Represents a newsletter curated by a journalist, containing multiple articles."""
     title = models.CharField(max_length=255)
     description = models.TextField()
     author = models.ForeignKey(
@@ -89,6 +77,5 @@ class Newsletter(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        """Return string representation of Newsletter."""
         return self.title
     

@@ -12,14 +12,13 @@ from .models import Article, CustomUser, Publisher, Newsletter
 from .serializers import ArticleSerializer, UserSerializer, PublisherSerializer, NewsletterSerializer
 
 
-# Custom creation form to expose the custom 'role' field
+# Forms
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = CustomUser
         fields = UserCreationForm.Meta.fields + ('email', 'role',)
 
 
-# Article & Newsletter Model Forms
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
@@ -32,7 +31,7 @@ class NewsletterForm(forms.ModelForm):
         fields = ['title', 'description', 'articles']
 
 
-# User Authentication & Landing
+# Authentication & Registration
 def register_view(request):
     """Render and process user registration with designated role selection."""
     if request.method == 'POST':
@@ -41,12 +40,11 @@ def register_view(request):
             user = form.save()
             login(request, user)
             
-            # Dynamic redirection based on user role
             if user.role == 'editor':
                 return redirect('pending_articles')
             elif user.role == 'journalist':
                 return redirect('create_article')
-            else:  # Reader or default
+            else:
                 return redirect('article_list')
     else:
         form = CustomUserCreationForm()
@@ -74,24 +72,23 @@ def is_journalist_or_editor(user):
 # Editor Approval Views
 @user_passes_test(is_editor)
 def pending_articles_list(request):
-    """Render a list of unapproved articles for editor review."""
+    """Render pending articles for editor review."""
     articles = Article.objects.filter(approved=False)
     return render(request, 'news_app/approve_articles.html', {'articles': articles})
 
 
 @user_passes_test(is_editor)
 def approve_article_action(request, article_id):
-    """Approve an article and trigger the article approval signal."""
+    """Approve article and trigger publication signals."""
     article = get_object_or_404(Article, id=article_id)
     article.approved = True
-    article.save()  # Triggers post_save signal
+    article.save()
     return redirect('pending_articles')
 
 
-# Journalist Views
+# Journalist Article Workflows (Create, Edit, Delete)
 @user_passes_test(is_journalist)
 def create_article_view(request):
-    """Allow journalists to submit new articles for editor approval."""
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
@@ -105,16 +102,38 @@ def create_article_view(request):
     return render(request, 'news_app/create_article.html', {'form': form})
 
 
-# Newsletter Views
+@user_passes_test(is_journalist)
+def edit_article_view(request, article_id):
+    article = get_object_or_404(Article, id=article_id, author=request.user)
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            updated_article = form.save(commit=False)
+            updated_article.approved = False  # Reset approval on edit
+            updated_article.save()
+            return redirect('article_list')
+    else:
+        form = ArticleForm(instance=article)
+    return render(request, 'news_app/edit_article.html', {'form': form, 'article': article})
+
+
+@user_passes_test(is_journalist)
+def delete_article_view(request, article_id):
+    article = get_object_or_404(Article, id=article_id, author=request.user)
+    if request.method == 'POST':
+        article.delete()
+        return redirect('article_list')
+    return render(request, 'news_app/delete_article_confirm.html', {'article': article})
+
+
+# Newsletter Workflows (Create, Edit, Delete)
 def newsletter_list_view(request):
-    """Allow all readers/users to view curated newsletters."""
     newsletters = Newsletter.objects.all().order_by('-created_at')
     return render(request, 'news_app/newsletter_list.html', {'newsletters': newsletters})
 
 
 @user_passes_test(is_journalist_or_editor)
 def create_newsletter_view(request):
-    """Allow journalists and editors to curate newsletters."""
     if request.method == 'POST':
         form = NewsletterForm(request.POST)
         if form.is_valid():
@@ -128,7 +147,29 @@ def create_newsletter_view(request):
     return render(request, 'news_app/create_newsletter.html', {'form': form})
 
 
-# DRF API ViewSet & Webhook
+@user_passes_test(is_journalist_or_editor)
+def edit_newsletter_view(request, newsletter_id):
+    newsletter = get_object_or_404(Newsletter, id=newsletter_id, author=request.user)
+    if request.method == 'POST':
+        form = NewsletterForm(request.POST, instance=newsletter)
+        if form.is_valid():
+            form.save()
+            return redirect('newsletter_list')
+    else:
+        form = NewsletterForm(instance=newsletter)
+    return render(request, 'news_app/edit_newsletter.html', {'form': form, 'newsletter': newsletter})
+
+
+@user_passes_test(is_journalist_or_editor)
+def delete_newsletter_view(request, newsletter_id):
+    newsletter = get_object_or_404(Newsletter, id=newsletter_id, author=request.user)
+    if request.method == 'POST':
+        newsletter.delete()
+        return redirect('newsletter_list')
+    return render(request, 'news_app/delete_newsletter_confirm.html', {'newsletter': newsletter})
+
+
+# DRF API ViewSet
 class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
 

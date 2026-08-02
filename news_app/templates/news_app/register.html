@@ -1,23 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register - News Application</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 50px auto; max-width: 400px; background-color: #f8f9fa; }
-        .form-container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { background-color: #007bff; color: white; border: none; padding: 10px 15px; width: 100%; border-radius: 4px; cursor: pointer; }
-        .btn:hover { background-color: #0056b3; }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <h2>Register for News Application</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn">Register</button>
-        </form>
-    </div>
-</body>
-</html>
+{% extends 'news_app/base.html' %}
+
+{% block title %}Register - News App{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Register for News Application</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success" style="width: 100%;">Register</button>
+    </form>
+    <p style="margin-top: 15px;">Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
+</div>
+{% endblock %}

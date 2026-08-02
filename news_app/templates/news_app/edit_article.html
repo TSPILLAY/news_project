@@ -1,0 +1,15 @@
+{% extends 'news_app/base.html' %}
+
+{% block title %}Edit Article{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Edit Article: {{ article.title }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-warning" style="width: 100%;">Save & Resubmit</button>
+    </form>
+    <p style="margin-top: 15px;"><a href="{% url 'article_list' %}">Cancel</a></p>
+</div>
+{% endblock %}
