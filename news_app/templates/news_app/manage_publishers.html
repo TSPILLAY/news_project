@@ -1,0 +1,33 @@
+{% extends 'news_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Publisher Management</h2>
+    <hr>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Create New Publisher</h4>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Create Publisher</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h4>Existing Publishers</h4>
+            <ul class="list-group">
+                {% for publisher in publishers %}
+                    <li class="list-group-item">
+                        <strong>{{ publisher.name }}</strong>
+                        <p class="mb-1 text-muted">{{ publisher.description }}</p>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No publishers created yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

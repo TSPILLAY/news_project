@@ -1,0 +1,33 @@
+{% extends 'news_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Subscriptions</h2>
+    <p>Select the publishers and journalists you want to subscribe to for custom news feed updates.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Publishers</h5>
+            </div>
+            <div class="card-body">
+                {{ form.subscribed_publishers }}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Journalists</h5>
+            </div>
+            <div class="card-body">
+                {{ form.subscribed_journalists }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Subscriptions</button>
+        <a href="{% url 'article_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

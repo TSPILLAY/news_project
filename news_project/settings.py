@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
- # Third-party applications
+    # Third-party applications
     'rest_framework',
     'rest_framework_simplejwt',
 
@@ -77,6 +77,11 @@ WSGI_APPLICATION = 'news_project.wsgi.application'
 # Specify the custom User model for authentication
 AUTH_USER_MODEL = 'news_app.CustomUser'
 
+# Authentication Redirect Settings
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'article_list'
+LOGOUT_REDIRECT_URL = 'login'
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
@@ -92,7 +97,7 @@ DATABASES = {
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
-}
+    }
 }
 
 # Django REST Framework Configuration using JWT Authentication
@@ -119,6 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 # Console Email Backend for local development and notification testing
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -136,7 +142,5 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-# Static files configuration
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = '/admin/login/'

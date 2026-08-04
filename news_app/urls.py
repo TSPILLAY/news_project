@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from rest_framework.routers import DefaultRouter
 from . import views
 
+
 router = DefaultRouter()
 router.register(r'articles', views.ArticleViewSet, basename='article')
 
@@ -16,14 +17,20 @@ urlpatterns = [
     path('', views.article_list_view, name='article_list'),
     path('feed/', views.article_list_view, name='article_list'),
     
+    # Reader Management
+    path('subscriptions/', views.manage_subscriptions_view, name='manage_subscriptions'),
+    
     # Journalist Workflows
     path('articles/create/', views.create_article_view, name='create_article'),
     path('articles/<int:article_id>/edit/', views.edit_article_view, name='edit_article'),
     path('articles/<int:article_id>/delete/', views.delete_article_view, name='delete_article'),
     
-    # Editor Dashboard
+    # Editor Workflows & Publisher Management
     path('pending/', views.pending_articles_list, name='pending_articles'),
     path('approve/<int:article_id>/', views.approve_article_action, name='approve_article'),
+    path('editor/articles/<int:article_id>/edit/', views.editor_edit_article_view, name='editor_edit_article'),
+    path('editor/articles/<int:article_id>/delete/', views.editor_delete_article_view, name='editor_delete_article'),
+    path('publishers/manage/', views.manage_publishers_view, name='manage_publishers'),
     
     # Newsletters
     path('newsletters/', views.newsletter_list_view, name='newsletter_list'),
