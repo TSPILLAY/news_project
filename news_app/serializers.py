@@ -3,7 +3,7 @@ from .models import CustomUser, Publisher, Article, Newsletter
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for CustomUser model representation."""
+    """Serializer for CustomUser model representation[cite: 14]."""
 
     class Meta:
         model = CustomUser
@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PublisherSerializer(serializers.ModelSerializer):
-    """Serializer for Publisher organization details."""
+    """Serializer for Publisher organization details[cite: 14]."""
 
     class Meta:
         model = Publisher
@@ -19,15 +19,16 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    """Serializer for news articles."""
+    """Serializer for news articles[cite: 14]."""
 
     class Meta:
         model = Article
         fields = '__all__'
+        read_only_fields = ['author', 'approved']
 
 
 class NewsletterSerializer(serializers.ModelSerializer):
-    """Serializer for curated newsletters."""
+    """Serializer for curated newsletters[cite: 14]."""
 
     class Meta:
         model = Newsletter

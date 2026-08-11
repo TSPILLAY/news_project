@@ -18,8 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    
     path('admin/', admin.site.urls),
-    # Forward all primary application traffic to news_app routing table
     path('', include('news_app.urls')),
 ]

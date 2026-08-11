@@ -1,13 +1,11 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 
 
 class CustomUser(AbstractUser):
     """
-    Custom user model extending Django's AbstractUser.
-    
-    Supports three distinct user roles: Reader, Editor, and Journalist.
-    Tracks subscribed publishers and journalists for Reader accounts.
+    Custom user model supporting Reader, Editor, and Journalist roles[cite: 13].
+    Automatically creates and assigns Django Group memberships upon save[cite: 13].
     """
     ROLE_CHOICES = (
         ('reader', 'Reader'),
@@ -15,6 +13,7 @@ class CustomUser(AbstractUser):
         ('journalist', 'Journalist'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='reader')
+    email = models.EmailField(unique=True)
 
     subscribed_publishers = models.ManyToManyField(
         'Publisher', blank=True, related_name='reader_subscribers'
@@ -24,18 +23,23 @@ class CustomUser(AbstractUser):
     )
 
     def save(self, *args, **kwargs):
-        """
-        Override standard save behavior.
-        Clears publisher and journalist subscriptions if role is non-reader.
-        """
         super().save(*args, **kwargs)
+        
+        # Clear subscriptions for non-readers
         if self.role != 'reader':
             self.subscribed_publishers.clear()
             self.subscribed_journalists.clear()
 
+        # Assign corresponding Django Group automatically
+        group_name = self.role.capitalize()
+        group, _ = Group.objects.get_or_create(name=group_name)
+        if not self.groups.filter(id=group.id).exists():
+            self.groups.clear()
+            self.groups.add(group)
+
 
 class Publisher(models.Model):
-    """Represents a publishing organization employing editors and journalists."""
+    """Represents a publishing organization employing editors and journalists[cite: 13]."""
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     editors = models.ManyToManyField(
@@ -50,7 +54,7 @@ class Publisher(models.Model):
 
 
 class Article(models.Model):
-    """Represents a news article written by a journalist."""
+    """Represents a news article written by a journalist[cite: 13]."""
     title = models.CharField(max_length=255)
     content = models.TextField()
     author = models.ForeignKey(
@@ -67,15 +71,17 @@ class Article(models.Model):
 
 
 class Newsletter(models.Model):
-    """Represents a newsletter curated by a journalist, containing multiple articles."""
+    """Represents a newsletter curated by a journalist or an editor[cite: 13]."""
     title = models.CharField(max_length=255)
     description = models.TextField()
     author = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name='newsletters', limit_choices_to={'role': 'journalist'}
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name='newsletters',
+        limit_choices_to=models.Q(role='journalist') | models.Q(role='editor')
     )
     articles = models.ManyToManyField(Article, related_name='newsletters')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
-    

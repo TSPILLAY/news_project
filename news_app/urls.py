@@ -1,8 +1,8 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import views
-
 
 router = DefaultRouter()
 router.register(r'articles', views.ArticleViewSet, basename='article')
@@ -22,6 +22,7 @@ urlpatterns = [
     
     # Journalist Workflows
     path('articles/create/', views.create_article_view, name='create_article'),
+    path('articles/mine/', views.my_articles_view, name='my_articles'),
     path('articles/<int:article_id>/edit/', views.edit_article_view, name='edit_article'),
     path('articles/<int:article_id>/delete/', views.delete_article_view, name='delete_article'),
     
@@ -38,7 +39,9 @@ urlpatterns = [
     path('newsletters/<int:newsletter_id>/edit/', views.edit_newsletter_view, name='edit_newsletter'),
     path('newsletters/<int:newsletter_id>/delete/', views.delete_newsletter_view, name='delete_newsletter'),
     
-    # REST API
+    # REST API & JWT Auth
     path('api/', include(router.urls)),
-    path('api/approved-log/', views.api_approved_log, name='api_approved_log'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/approved/', views.api_approved_log, name='api_approved_log'),
 ]

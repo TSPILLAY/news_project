@@ -1,0 +1,14 @@
+<h2>My Articles</h2>
+<a href="{% url 'create_article' %}">Create New Article</a>
+<hr>
+{% for article in articles %}
+    <div class="article-card">
+        <h3>{{ article.title }}</h3>
+        <p>Status: {% if article.approved %}Approved{% else %}Pending Review{% endif %}</p>
+        <p>{{ article.content }}</p>
+        <a href="{% url 'edit_article' article.id %}">Edit</a>
+        <a href="{% url 'delete_article' article.id %}">Delete</a>
+    </div>
+{% empty %}
+    <p>You have not written any articles yet.</p>
+{% endfor %}

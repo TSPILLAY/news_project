@@ -27,7 +27,7 @@ def on_article_approved(sender, instance, created, **kwargs):
 
         try:
             requests.post(
-                "http://127.0.0.1:8000/api/approved-log/",
+                "http://127.0.0.1:8000/api/approved/",
                 json={
                     "article_id": instance.id,
                     "title": instance.title,

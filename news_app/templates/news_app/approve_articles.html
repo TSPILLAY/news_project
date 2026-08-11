@@ -1,20 +1,69 @@
 {% extends 'news_app/base.html' %}
 
-{% block title %}Editor Dashboard - Approve Articles{% endblock %}
-
 {% block content %}
-<h2>Pending Articles for Approval</h2>
+<div class="container mt-4">
+    <h2>Editor Dashboard</h2>
+    <p class="text-muted">Manage article reviews, moderation, and published content.</p>
 
-{% if articles %}
-    {% for article in articles %}
-        <div class="card">
-            <h3>{{ article.title }}</h3>
-            <p><strong>Author:</strong> {{ article.author.username }}</p>
-            <p>{{ article.content }}</p>
-            <a href="{% url 'approve_article' article.id %}" class="btn btn-success">Approve & Publish</a>
+    <!-- SECTION 1: PENDING ARTICLES QUEUE -->
+    <section class="card mb-4 shadow-sm">
+        <div class="card-header bg-warning text-dark font-weight-bold">
+            Pending Articles (Awaiting Review)
         </div>
-    {% endfor %}
-{% else %}
-    <p>No articles currently awaiting approval.</p>
-{% endif %}
+        <div class="card-body">
+            {% if articles %}
+                <div class="list-group">
+                    {% for article in articles %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>{{ article.title }}</h5>
+                                <small class="text-muted">
+                                    By {{ article.author.username }} | {{ article.created_at|date:"M d, Y H:i" }}
+                                </small>
+                                <p class="mt-2 mb-0">{{ article.content|truncatewords:30 }}</p>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'approve_article' article.id %}" class="btn btn-success btn-sm">Approve & Publish</a>
+                                <a href="{% url 'editor_edit_article' article.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                                <a href="{% url 'editor_delete_article' article.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="mb-0 text-muted">No pending articles awaiting review.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- SECTION 2: APPROVED / PUBLISHED ARTICLES QUEUE -->
+    <section class="card mb-4 shadow-sm">
+        <div class="card-header bg-success text-white font-weight-bold">
+            Approved Articles (Published Content)
+        </div>
+        <div class="card-body">
+            {% if approved_articles %}
+                <div class="list-group">
+                    {% for article in approved_articles %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>{{ article.title }}</h5>
+                                <small class="text-muted">
+                                    By {{ article.author.username }} | Published: {{ article.created_at|date:"M d, Y H:i" }}
+                                </small>
+                                <p class="mt-2 mb-0">{{ article.content|truncatewords:30 }}</p>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'editor_edit_article' article.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                                <a href="{% url 'editor_delete_article' article.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="mb-0 text-muted">No published articles currently listed.</p>
+            {% endif %}
+        </div>
+    </section>
+</div>
 {% endblock %}
