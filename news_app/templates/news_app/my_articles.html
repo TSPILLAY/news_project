@@ -1,14 +1,37 @@
-<h2>My Articles</h2>
-<a href="{% url 'create_article' %}">Create New Article</a>
-<hr>
-{% for article in articles %}
-    <div class="article-card">
-        <h3>{{ article.title }}</h3>
-        <p>Status: {% if article.approved %}Approved{% else %}Pending Review{% endif %}</p>
-        <p>{{ article.content }}</p>
-        <a href="{% url 'edit_article' article.id %}">Edit</a>
-        <a href="{% url 'delete_article' article.id %}">Delete</a>
+{% extends 'base.html' %}
+
+{% block title %}My Articles - News App{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>My Submitted Articles</h2>
+        <a href="{% url 'create_article' %}" class="btn btn-success">Create New Article</a>
     </div>
-{% empty %}
-    <p>You have not written any articles yet.</p>
-{% endfor %}
+
+    {% if articles %}
+        {% for article in articles %}
+            <div class="card">
+                <h3>{{ article.title }}</h3>
+                <p>
+                    <strong>Status:</strong> 
+                    {% if article.approved %}
+                        <span style="color: #28a745;">Approved</span>
+                    {% else %}
+                        <span style="color: #ffc107;">Pending Review</span>
+                    {% endif %}
+                </p>
+                <p>{{ article.content }}</p>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <a href="{% url 'edit_article' article.id %}" class="btn btn-warning">Edit Article</a>
+                    <a href="{% url 'delete_article' article.id %}" class="btn btn-danger">Delete Article</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="card">
+            <p>You have not written any articles yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

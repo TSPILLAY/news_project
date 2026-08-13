@@ -31,6 +31,7 @@
                 
                 {% if user.role == 'journalist' %}
                     <a href="{% url 'create_article' %}">Submit Article</a>
+                    <a href="{% url 'my_articles' %}">My Articles</a>
                 {% endif %}
                 
                 {% if user.role == 'editor' %}

@@ -49,8 +49,9 @@ ROOT_URLCONF = 'news_project.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.DjangoTemplates',
-        'DIRS': [],
+        # Fixed: Corrected backend engine path string
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,7 +76,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'news_db',
         'USER': 'root',
-        'PASSWORD': 'YOUR_DATABASE_PASSWORD',
+        'PASSWORD': 'Tanayp1010',
         'HOST': '127.0.0.1',                      
         'PORT': '3306',
         'OPTIONS': {

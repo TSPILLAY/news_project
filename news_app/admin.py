@@ -1,3 +1,7 @@
+"""
+Admin configuration module registering core models into Django Admin interface[cite: 1].
+"""
+
 from django.contrib import admin
 from .models import CustomUser, Publisher, Article, Newsletter
 

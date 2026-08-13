@@ -1,10 +1,34 @@
-{% for article in articles %}
-    <div class="article-card">
-        <h2>{{ article.title }}</h2>
-        <p>{{ article.content }}</p>
-        {% if user.role == 'editor' %}
-            <a href="{% url 'editor_edit_article' article.id %}">Edit Live Article</a>
-            <a href="{% url 'editor_delete_article' article.id %}">Delete Article</a>
-        {% endif %}
-    </div>
-{% endfor %}
+{% extends 'base.html' %}
+
+{% block title %}Home Feed - News Application{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <h2 style="margin-bottom: 20px;">Latest Published Articles</h2>
+
+    {% if articles %}
+        {% for article in articles %}
+            <div class="card">
+                <h2>{{ article.title }}</h2>
+                <p style="color: #6c757d; font-size: 0.9em; margin-bottom: 10px;">
+                    By <strong>{{ article.author.username }}</strong> 
+                    {% if article.publisher %} | <em>{{ article.publisher.name }}</em>{% endif %}
+                    | Published on {{ article.created_at|date:"F j, Y" }}
+                </p>
+                <p>{{ article.content }}</p>
+
+                {% if user.role == 'editor' %}
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <a href="{% url 'editor_edit_article' article.id %}" class="btn btn-warning">Edit Live Article</a>
+                        <a href="{% url 'editor_delete_article' article.id %}" class="btn btn-danger">Delete Article</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="card">
+            <p>No approved articles available right now. Check back soon!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,11 +1,10 @@
-{% extends 'news_app/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 <div class="container mt-4">
     <h2>Editor Dashboard</h2>
     <p class="text-muted">Manage article reviews, moderation, and published content.</p>
 
-    <!-- SECTION 1: PENDING ARTICLES QUEUE -->
     <section class="card mb-4 shadow-sm">
         <div class="card-header bg-warning text-dark font-weight-bold">
             Pending Articles (Awaiting Review)
@@ -36,7 +35,6 @@
         </div>
     </section>
 
-    <!-- SECTION 2: APPROVED / PUBLISHED ARTICLES QUEUE -->
     <section class="card mb-4 shadow-sm">
         <div class="card-header bg-success text-white font-weight-bold">
             Approved Articles (Published Content)
